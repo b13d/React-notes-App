@@ -8,7 +8,7 @@ import moment from "moment";
 import {Simulate} from "react-dom/test-utils";
 
 
-export default function Note() {
+export default function Note(props) {
     const [content, setContent] = useState("")
     const [counter, setCount] = useState(200)
     const [messageError, setMessageError] = useState("")
@@ -28,6 +28,13 @@ export default function Note() {
     const currentID: number = useSelector((state) => state.counterNoteReducer.currentID)
     const dispatch = useDispatch()
 
+
+    if (styleNote.backgroundColor !== props.backGround) {
+        setStyleNote({
+            ...styleNote,
+            backgroundColor: props.backGround,
+        })
+    }
 
     const handleChange = (e) => {
         if (e.target.value.length < 201) {
@@ -60,7 +67,7 @@ export default function Note() {
             dispatch(listNoteIncrement({
                     currentID: currentID,
                     listContent: refTextarea.current.value,
-                    dataContent: moment().format('L').toString()
+                    listData: moment().format('L').toString()
                 }
                 ,
                 ""

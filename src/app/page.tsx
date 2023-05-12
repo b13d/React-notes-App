@@ -12,7 +12,7 @@ type TypeListData = {
     data: string[]
 }
 
-export default function Home(props) {
+export default function Home() {
     const count = useSelector((state) => state.counterNoteReducer.value)
     const dispatch = useDispatch()
     // const [listNote, setListNote] = useState<string[]>([])
@@ -36,6 +36,12 @@ export default function Home(props) {
         padding: 0.5 + "rem",
     })
     const [search_term, setSearch_term] = useState("")
+    const [styleBody, setStyleBody] = useState({
+        color: "black",
+        background: "white",
+        currentNoteBG: "#51bbaf",
+        NotesBG: "#fff585"
+    })
 
     const handleChange = (e) => {
         console.log("addEvent")
@@ -57,6 +63,35 @@ export default function Home(props) {
         // console.log(e) // получение id текущего note
     }
 
+    const handleToogleMode = (e) => {
+        let tempStyle = ""
+        let tempNotesBG = ""
+
+        if (styleBody.background === "white") {
+            tempStyle = "#000000cc"
+            tempNotesBG = "#b7af5f"
+            setStyleBody({
+                color: "white", background: "#000000cc", currentNoteBG: "#33766f",
+                NotesBG: "#b7af5f"
+            })
+        } else {
+            tempStyle = "white"
+            tempNotesBG = "#fff585"
+
+            setStyleBody({
+                color: "black", background: "white", currentNoteBG: "#51bbaf",
+                NotesBG: "#fff585"
+            })
+        }
+
+        setStyleNote({
+            ...styleNote,
+            backgroundColor: tempNotesBG
+        })
+
+        document.body.style.backgroundColor = tempStyle
+    }
+
     useEffect(() => {
         setListNote(ListNote())
     }, [currentID])
@@ -64,7 +99,6 @@ export default function Home(props) {
     useEffect(() => {
         setListNote(ListNote())
     }, [deleteID])
-
 
     function ListNote(tempText?: string): TypeListData {
         // let tempArr: object = []
@@ -116,22 +150,25 @@ export default function Home(props) {
         }
     }
 
+
+
     return (
         <div className="md:w-[1120px] m-auto">
             <header>
                 <nav className="flex justify-between items-center">
-                    <h1 className="text-4xl font-bold">Notes</h1>
-                    <button className="bg-gray-300 rounded-2xl py-1 px-4">Toggle Mode</button>
+                    <h1 style={{color: styleBody.color}} className="text-4xl font-bold">Notes</h1>
+                    <button onClick={handleToogleMode} className="bg-gray-300 rounded-2xl py-1 px-4">Toggle Mode
+                    </button>
                 </nav>
                 <input className="bg-gray-300 w-full rounded-lg pl-2 py-0.5 my-4 placeholder-gray-500"
                        placeholder="type to search..." type="text" onChange={(e) => handleChange(e)}/>
             </header>
             <main className="grid-cols-3 grid flex-wrap justify-between items-center gap-[2rem]">
-                <Note/>
+                <Note backGround={styleBody.currentNoteBG}/>
                 {listNote !== undefined && listNote.id.map((value, index: number) => {
                     return (
                         <div key={listNote.id[index]} id={listNote.id[index]} style={styleNote}>
-            <textarea key={listNote.id[index]} readOnly type="text" value={listNote.content[index]}
+            <textarea key={listNote.id[index]} readOnly value={listNote.content[index]}
                       placeholder="Type to add a note"
                       className="placeholder-[#5d9794] bg-transparent w-[300px] h-[160px] resize-none tracking-wide font-semibold font-roboto text-lg rounded-lg outline-none"/>
 
