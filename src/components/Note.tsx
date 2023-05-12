@@ -5,10 +5,8 @@ import {useSelector, useDispatch} from "react-redux";
 import {listNoteIncrement} from "@/Slice/noteSlice";
 import Image from "next/image";
 import moment from "moment";
-import page from "@/app/page"
 import {Simulate} from "react-dom/test-utils";
-import click = Simulate.click;
-import keyDown = Simulate.keyDown;
+
 
 export default function Note() {
     const [content, setContent] = useState("")
@@ -27,7 +25,7 @@ export default function Note() {
     const refData = useRef(null);
     const [focus, setFocus] = useState(false)
 
-    const currentID = useSelector((state) => state.counterNoteReducer.currentID)
+    const currentID: number = useSelector((state) => state.counterNoteReducer.currentID)
     const dispatch = useDispatch()
 
 
@@ -60,9 +58,9 @@ export default function Note() {
             setSave(true)
 
             dispatch(listNoteIncrement({
-                    id: currentID,
-                    content: refTextarea.current.value,
-                    data: moment().format('L').toString()
+                    currentID: currentID,
+                    listContent: refTextarea.current.value,
+                    dataContent: moment().format('L').toString()
                 }
                 ,
                 ""

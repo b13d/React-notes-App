@@ -6,11 +6,26 @@ import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {listNoteDecrement} from "@/Slice/noteSlice";
 
+type TypeListData = {
+    id: string[],
+    content: string[],
+    data: string[]
+}
 
 export default function Home(props) {
     const count = useSelector((state) => state.counterNoteReducer.value)
     const dispatch = useDispatch()
-    const [listNote, setListNote] = useState<string[]>([])
+    // const [listNote, setListNote] = useState<string[]>([])
+    const [listNote, setListNote] = useState<TypeListData>({
+        id: [],
+        content: [],
+        data: []
+    })
+    const [allListNote, setAllListNote] = useState<TypeListData>({
+        id: [],
+        content: [],
+        data: []
+    })
     const [deleteID, setDeleteID] = useState("")
     const currentID: number = useSelector((state) => state.counterNoteReducer.currentID)
     const [styleNote, setStyleNote] = useState({
@@ -20,17 +35,14 @@ export default function Home(props) {
         height: 220 + "px",
         padding: 0.5 + "rem",
     })
-
-    let search_term = ""
+    const [search_term, setSearch_term] = useState("")
 
     const handleChange = (e) => {
         console.log("addEvent")
 
-        search_term = e.target.value;
+        setSearch_term(e.target.value);
 
-        console.log(search_term)
-
-        setListNote(ListNote())
+        setListNote(ListNote(e.target.value))
     }
 
 
@@ -41,24 +53,33 @@ export default function Home(props) {
         }, ""))
 
 
-        console.log("id: " + id + " deleteID " + deleteID)
         setDeleteID(id)
         // console.log(e) // получение id текущего note
     }
 
     useEffect(() => {
-        console.log("Перезагрузка listNote")
         setListNote(ListNote())
     }, [currentID])
 
     useEffect(() => {
-        console.log("Перезагрузка listNote")
         setListNote(ListNote())
     }, [deleteID])
 
 
-    function ListNote(): string[] {
-        let tempArr = []
+    function ListNote(tempText?: string): TypeListData {
+        // let tempArr: object = []
+
+        let currentNoteList: TypeListData = {
+            id: [],
+            content: [],
+            data: [],
+        }
+
+        let tempArrAll: TypeListData = {
+            id: [],
+            content: [],
+            data: [],
+        }
 
         console.log("Function ListNote")
 
@@ -70,20 +91,27 @@ export default function Home(props) {
             console.log(listContent)
 
             if (localStorage.getItem("listContent").length === 0) {
-                return tempArr
+                return currentNoteList
             } else {
                 for (let i = 0; i < localStorage.getItem("listContent").split('|').length; i++) {
-                    if (search_term.length === 0 || listContent[i].substring(0, search_term.length).toLowerCase() === search_term.substring(0, search_term.length).toLowerCase()) {
-                        tempArr.push({
-                            id: listID[i],
-                            content: listContent[i],
-                            data: listData[i],
-                        })
+                    if (((tempText?.length === 0 || tempText === undefined) && search_term.length === 0) || listContent[i].substring(0, tempText?.length).toLowerCase() === tempText?.substring(0, tempText?.length).toLowerCase()) {
+                        currentNoteList.id.push(listID[i])
+                        currentNoteList.content.push(listContent[i])
+                        currentNoteList.data.push(listData[i])
+                        // tempArr.push({
+                        //     id: listID[i],
+                        //     content: listContent[i],
+                        //     data: listData[i],
+                        // })
                     }
+                    tempArrAll.id.push(listID[i])
+                    tempArrAll.content.push(listContent[i])
+                    tempArrAll.data.push(listData[i])
                 }
 
-                console.log(tempArr)
-                return tempArr
+
+                setAllListNote(tempArrAll)
+                return currentNoteList
             }
         }
     }
@@ -100,16 +128,17 @@ export default function Home(props) {
             </header>
             <main className="grid-cols-3 grid flex-wrap justify-between items-center gap-[2rem]">
                 <Note/>
-                {listNote !== undefined && listNote.map((value, index) => {
+                {listNote !== undefined && listNote.id.map((value, index: number) => {
                     return (
-                        <div key={value.id} id={value.id} style={styleNote}>
-            <textarea key={value.id} readOnly type="text" value={value.content}
+                        <div key={listNote.id[index]} id={listNote.id[index]} style={styleNote}>
+            <textarea key={listNote.id[index]} readOnly type="text" value={listNote.content[index]}
                       placeholder="Type to add a note"
                       className="placeholder-[#5d9794] bg-transparent w-[300px] h-[160px] resize-none tracking-wide font-semibold font-roboto text-lg rounded-lg outline-none"/>
 
                             <div className="flex justify-between">
-                                <span className="font-semibold">{value.data}</span>
-                                <Image onClick={() => handleDelete(value.id, listNote)} src="/image/icon-delete.png"
+                                <span className="font-semibold">{listNote.data[index]}</span>
+                                <Image onClick={() => handleDelete(listNote.id[index], allListNote)}
+                                       src="/image/icon-delete.png"
                                        alt="icon-delete"
                                        width={30}
                                        height={30} className="cursor-pointer"/>

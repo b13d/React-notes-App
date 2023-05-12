@@ -1,9 +1,16 @@
 import {createSlice} from '@reduxjs/toolkit'
-import Note from "@/components/Note";
 
-// console.log(localStorage.getItem("listContent"))
-// console.log(localStorage.getItem("listData"))
+type TypeListData = {
+    id: string[],
+    content: string[],
+    data: string[]
+}
 
+type TypeData = {
+    currentID: number
+    listData: string
+    listContent: string
+}
 
 interface INFCounterNote {
     currentID: number
@@ -13,7 +20,7 @@ interface INFCounterNote {
 }
 
 const initialState: INFCounterNote = {
-    currentID: localStorage.getItem("currentID") === null ? 1 : Number(localStorage.getItem("currentID")),
+    currentID: localStorage.getItem("currentID").length === 0 ? 1 : Number(localStorage.getItem("currentID")),
     listID: localStorage.getItem("listID"),
     listContent: localStorage.getItem("listContent"),
     listData: localStorage.getItem("listData")
@@ -23,17 +30,19 @@ export const noteSlice = createSlice({
     name: 'counterNote',
     initialState,
     reducers: {
-        listNoteIncrement: (state, action) => {
+        listNoteIncrement: (state:TypeData, action) => {
             let listID = localStorage.getItem("listID");
 
-            if (listID !== null && listID.length > 0) {
+            if (listID !== "" && listID.length > 0) {
                 let arrListID = localStorage.getItem("listID")?.split(",")
                 let arrlistContent = localStorage.getItem("listContent")?.split("|")
                 let arrlistData = localStorage.getItem("listData")?.split(",")
 
-                arrListID.push(state.currentID)
-                arrlistContent.push(action.payload.content)
-                arrlistData.push(action.payload.data)
+                arrListID.push(state.currentID.toString())
+                arrlistContent.push(action.payload.listContent)
+                arrlistData.push(action.payload.listData)
+
+
 
 
                 // console.log(arrListID)
@@ -41,12 +50,12 @@ export const noteSlice = createSlice({
                 localStorage.setItem("listContent", arrlistContent.join('|'))
                 localStorage.setItem("listData", arrlistData.join(','))
             } else {
-                localStorage.setItem("listID", state.currentID)
-                localStorage.setItem("listContent", action.payload.content)
-                localStorage.setItem("listData", action.payload.data)
+                localStorage.setItem("listID", state.currentID.toString())
+                localStorage.setItem("listContent", action.payload.listContent)
+                localStorage.setItem("listData", action.payload.listData)
             }
             state.currentID = Number(state.currentID) + 1
-            localStorage.setItem("currentID", state.currentID)
+            localStorage.setItem("currentID", state.currentID.toString())
         },
         listNoteDecrement: (state, action) => {
             const currentID = action.payload.id
@@ -54,15 +63,14 @@ export const noteSlice = createSlice({
             const listContent = []
             const listData = []
 
-            let listNote = action.payload.listNote
+            let listNote:TypeListData = action.payload.listNote
 
-            listNote.filter((item) => {
-                    if (item.id === currentID) {
-                        // console.log("Я НАШЕЛ id: " + currentID)
+            listNote.id.filter((item,index) => {
+                    if (item === currentID) {
                     } else {
-                        listID.push(item.id)
-                        listContent.push(item.content)
-                        listData.push(item.data)
+                        listID.push(listNote.id[index])
+                        listContent.push(listNote.content[index])
+                        listData.push(listNote.data[index])
                     }
                 },
             )
