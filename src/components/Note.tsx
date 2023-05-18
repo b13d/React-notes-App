@@ -24,7 +24,7 @@ export default function Note(props: TypeNoteProps) {
   const refData = useRef(null);
   const [focus, setFocus] = useState(false);
 
-  const currentID: number = useAppSelector(
+  const currentID: string | number = useAppSelector(
     (state) => state.counterNoteReducer.currentID
   );
   const dispatch = useAppDispatch();

@@ -9,18 +9,29 @@ type TypeData = {
 };
 
 interface INFCounterNote {
-  currentID: number;
+  currentID: string | number;
   listID: string;
   listContent: string;
   listData: string;
 }
 
-const initialState: INFCounterNote = {
-  currentID: Number(localStorage.getItem("currentID")) || 1,
-  listID: localStorage.getItem("listID") || "",
-  listContent: localStorage.getItem("listContent") || "",
-  listData: localStorage.getItem("listData") || "",
-};
+let initialState: INFCounterNote;
+
+if (window.onload) {
+  initialState = {
+    currentID: localStorage.getItem("currentID") || 1,
+    listID: localStorage.getItem("listID") || "",
+    listContent: localStorage.getItem("listContent") || "",
+    listData: localStorage.getItem("listData") || "",
+  };
+} else {
+  initialState = {
+    currentID: 1,
+    listID: "",
+    listContent: "",
+    listData: "",
+  };
+}
 
 export const noteSlice = createSlice({
   name: "counterNote",
@@ -56,13 +67,12 @@ export const noteSlice = createSlice({
       localStorage.setItem("currentID", state.currentID.toString());
     },
     listNoteDecrement: (state, action) => {
-    //   console.log(action);
+      //   console.log(action);
 
       let listNote: TypeListData = action.payload.objectNote;
       const currentID = action.payload.id;
 
-    //   console.log(listNote);
-    
+      //   console.log(listNote);
 
       const listID: string[] = [];
       const listContent: string[] = [];
@@ -80,7 +90,7 @@ export const noteSlice = createSlice({
         localListID != null &&
         localListContent != null &&
         localListData != null
-      ) {      
+      ) {
         for (let i = 0; i < localListID.split(",").length; i++) {
           lists.push({
             currentID: localListID.split(",")[i],

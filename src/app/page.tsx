@@ -44,7 +44,7 @@ export default function Home() {
     })
 
     const [deleteID, setDeleteID] = useState("")
-    const currentID: number = useAppSelector((state) => state.counterNoteReducer.currentID) // type change
+    const currentID: string | number = useAppSelector((state) => state.counterNoteReducer.currentID) // type change
 
     const [styleNote, setStyleNote] = useState({
         backgroundColor: "#fff585",
