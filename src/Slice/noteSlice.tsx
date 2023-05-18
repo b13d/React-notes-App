@@ -15,23 +15,22 @@ interface INFCounterNote {
   listData: string;
 }
 
-let initialState: INFCounterNote;
+let initialState: INFCounterNote = {
+  currentID: 1,
+  listID: "",
+  listContent: "",
+  listData: "",
+};
 
-if (window.onload) {
+if (typeof window !== 'undefined') {
   initialState = {
     currentID: localStorage.getItem("currentID") || 1,
     listID: localStorage.getItem("listID") || "",
     listContent: localStorage.getItem("listContent") || "",
     listData: localStorage.getItem("listData") || "",
   };
-} else {
-  initialState = {
-    currentID: 1,
-    listID: "",
-    listContent: "",
-    listData: "",
-  };
 }
+
 
 export const noteSlice = createSlice({
   name: "counterNote",
