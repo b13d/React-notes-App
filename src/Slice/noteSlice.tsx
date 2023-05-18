@@ -1,88 +1,112 @@
-import {createSlice} from '@reduxjs/toolkit'
-
-type TypeListData = {
-    id: string[],
-    content: string[],
-    data: string[]
-}
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { TypeListData } from "@/app/page";
+import { list } from "postcss";
 
 type TypeData = {
-    currentID: number
-    listData: string
-    listContent: string
-}
+  currentID: string;
+  listData: string;
+  listContent: string;
+};
 
 interface INFCounterNote {
-    currentID: number
-    listID: string
-    listContent: string
-    listData: string
+  currentID: number;
+  listID: string;
+  listContent: string;
+  listData: string;
 }
 
 const initialState: INFCounterNote = {
-    currentID: localStorage.getItem("currentID").length === 0 ? 1 : Number(localStorage.getItem("currentID")),
-    listID: localStorage.getItem("listID"),
-    listContent: localStorage.getItem("listContent"),
-    listData: localStorage.getItem("listData")
-}
+  currentID: Number(localStorage.getItem("currentID")) || 1,
+  listID: localStorage.getItem("listID") || "",
+  listContent: localStorage.getItem("listContent") || "",
+  listData: localStorage.getItem("listData") || "",
+};
 
 export const noteSlice = createSlice({
-    name: 'counterNote',
-    initialState,
-    reducers: {
-        listNoteIncrement: (state:TypeData, action) => {
-            let listID = localStorage.getItem("listID");
+  name: "counterNote",
+  initialState,
+  reducers: {
+    listNoteIncrement: (state, action) => {
+      let listID = localStorage.getItem("listID");
 
-            if (listID !== "" && listID.length > 0) {
-                let arrListID = localStorage.getItem("listID")?.split(",")
-                let arrlistContent = localStorage.getItem("listContent")?.split("|")
-                let arrlistData = localStorage.getItem("listData")?.split(",")
+      if (listID != null && listID.length > 0) {
+        let arrListID = localStorage.getItem("listID")?.split(",");
+        let arrlistContent = localStorage.getItem("listContent")?.split("|");
+        let arrlistData = localStorage.getItem("listData")?.split(",");
 
-                arrListID.push(state.currentID.toString())
-                arrlistContent.push(action.payload.listContent)
-                arrlistData.push(action.payload.listData)
+        if (
+          arrListID != undefined &&
+          arrlistContent != undefined &&
+          arrlistData != undefined
+        ) {
+          arrListID.push(state.currentID.toString());
+          arrlistContent.push(action.payload.listContent);
+          arrlistData.push(action.payload.listData);
 
-
-
-
-                // console.log(arrListID)
-                localStorage.setItem("listID", arrListID.join(','))
-                localStorage.setItem("listContent", arrlistContent.join('|'))
-                localStorage.setItem("listData", arrlistData.join(','))
-            } else {
-                localStorage.setItem("listID", state.currentID.toString())
-                localStorage.setItem("listContent", action.payload.listContent)
-                localStorage.setItem("listData", action.payload.listData)
-            }
-            state.currentID = Number(state.currentID) + 1
-            localStorage.setItem("currentID", state.currentID.toString())
-        },
-        listNoteDecrement: (state, action) => {
-            const currentID = action.payload.id
-            const listID = []
-            const listContent = []
-            const listData = []
-
-            let listNote:TypeListData = action.payload.listNote
-
-            listNote.id.filter((item,index) => {
-                    if (item === currentID) {
-                    } else {
-                        listID.push(listNote.id[index])
-                        listContent.push(listNote.content[index])
-                        listData.push(listNote.data[index])
-                    }
-                },
-            )
-
-            localStorage.setItem("listID", listID.join(','))
-            localStorage.setItem("listContent", listContent.join('|'))
-            localStorage.setItem("listData", listData.join(','))
-        },
+          localStorage.setItem("listID", arrListID.join(","));
+          localStorage.setItem("listContent", arrlistContent.join("|"));
+          localStorage.setItem("listData", arrlistData.join(","));
+        }
+      } else {
+        localStorage.setItem("listID", state.currentID.toString());
+        localStorage.setItem("listContent", action.payload.listContent);
+        localStorage.setItem("listData", action.payload.listData);
+      }
+      state.currentID = Number(state.currentID) + 1;
+      localStorage.setItem("currentID", state.currentID.toString());
     },
-})
+    listNoteDecrement: (state, action) => {
+    //   console.log(action);
+
+      let listNote: TypeListData = action.payload.objectNote;
+      const currentID = action.payload.id;
+
+    //   console.log(listNote);
+    
+
+      const listID: string[] = [];
+      const listContent: string[] = [];
+      const listData: string[] = [];
+
+      let localListID = localStorage.getItem("listID");
+      let localListContent = localStorage.getItem("listContent");
+      let localListData = localStorage.getItem("listData");
+
+      let arr: string = localListID || "";
+
+      let lists: TypeData[] = [];
+
+      if (
+        localListID != null &&
+        localListContent != null &&
+        localListData != null
+      ) {      
+        for (let i = 0; i < localListID.split(",").length; i++) {
+          lists.push({
+            currentID: localListID.split(",")[i],
+            listContent: localListContent.split("|")[i],
+            listData: localListData.split(",")[i],
+          });
+        }
+
+        arr.split(",").filter((item, index) => {
+          if (item === currentID) {
+          } else {
+            listID.push(lists[index].currentID);
+            listContent.push(lists[index].listContent);
+            listData.push(lists[index].listData);
+          }
+        });
+
+        localStorage.setItem("listID", listID.join(","));
+        localStorage.setItem("listContent", listContent.join("|"));
+        localStorage.setItem("listData", listData.join(","));
+      }
+    },
+  },
+});
 
 // Action creators are generated for each case reducer function
-export const {listNoteIncrement, listNoteDecrement} = noteSlice.actions
+export const { listNoteIncrement, listNoteDecrement } = noteSlice.actions;
 
-export default noteSlice.reducer
+export default noteSlice.reducer;

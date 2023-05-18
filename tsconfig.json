@@ -12,6 +12,8 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "strictNullChecks": true, // эту добавил
+    "noImplicitAny": true, // эту добавил
     "jsx": "preserve",
     "incremental": true,
     "plugins": [

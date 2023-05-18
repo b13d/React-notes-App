@@ -2,19 +2,35 @@
 
 import Image from 'next/image'
 import Note from "@/components/Note";
-import {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {ChangeEvent, ChangeEventHandler, useEffect, useState} from "react";
+import {useAppDispatch, useAppSelector} from "@/app/hooks";
 import {listNoteDecrement} from "@/Slice/noteSlice";
+import {list} from "postcss";
 
-type TypeListData = {
+export type TypeListData = {
     id: string[],
     content: string[],
     data: string[]
 }
 
+export type TypeNoteProps = {
+    backGround: string,
+}
+
+export type TypePropStyle = {
+    color: string,
+    background: string,
+    currentNoteBG: string,
+    NotesBG: string
+}
+
+export type TypeExample = {
+    id: string[],
+}
+
+
 export default function Home() {
-    const count = useSelector((state) => state.counterNoteReducer.value)
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
     // const [listNote, setListNote] = useState<string[]>([])
     const [listNote, setListNote] = useState<TypeListData>({
         id: [],
@@ -26,8 +42,10 @@ export default function Home() {
         content: [],
         data: []
     })
+
     const [deleteID, setDeleteID] = useState("")
-    const currentID: number = useSelector((state) => state.counterNoteReducer.currentID)
+    const currentID: number = useAppSelector((state) => state.counterNoteReducer.currentID) // type change
+
     const [styleNote, setStyleNote] = useState({
         backgroundColor: "#fff585",
         borderRadius: 0.5 + "rem",
@@ -36,34 +54,40 @@ export default function Home() {
         padding: 0.5 + "rem",
     })
     const [search_term, setSearch_term] = useState("")
-    const [styleBody, setStyleBody] = useState({
+    const [styleBody, setStyleBody] = useState<TypePropStyle>({
         color: "black",
         background: "white",
         currentNoteBG: "#51bbaf",
         NotesBG: "#fff585"
     })
 
-    const handleChange = (e) => {
-        console.log("addEvent")
+    const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
+        setSearch_term(e.currentTarget.value);
 
-        setSearch_term(e.target.value);
-
-        setListNote(ListNote(e.target.value))
+        setListNote(ListNote(e.currentTarget.value))
     }
 
 
-    const handleDelete = (id, listNote) => {
-        dispatch(listNoteDecrement({
-            id: id,
-            listNote: listNote
-        }, ""))
+    const handleDelete = (id: string, listNote: TypeListData, index: number) => {
+
+
+        // console.log(listNote)
+
+        let objectNote: TypeListData = {
+            id: [listNote.id[index]],
+            content: [listNote.content[index]],
+            data: [listNote.data[index]],
+        }
+
+        // console.log(objectNote)
+        dispatch(listNoteDecrement({id, objectNote}))
 
 
         setDeleteID(id)
         // console.log(e) // получение id текущего note
     }
 
-    const handleToogleMode = (e) => {
+    const handleToogleMode = () => {
         let tempStyle = ""
         let tempNotesBG = ""
 
@@ -115,19 +139,19 @@ export default function Home() {
             data: [],
         }
 
-        console.log("Function ListNote")
+        // console.log("Function ListNote")
 
-        if (localStorage.getItem("listContent") !== null) {
-            let listID = localStorage.getItem("listID").split(',')
-            let listContent = localStorage.getItem("listContent").split('|')
-            let listData = localStorage.getItem("listData").split(',')
+        if (localStorage.getItem("listID") != null && localStorage.getItem("listContent") != null && localStorage.getItem("listData") != null) {
+            let listID = localStorage.getItem("listID")!.split(',')
+            let listContent = localStorage.getItem("listContent")!.split('|')
+            let listData = localStorage.getItem("listData")!.split(',')
 
-            console.log(listContent)
+            // console.log(listContent)
 
-            if (localStorage.getItem("listContent").length === 0) {
+            if (localStorage.getItem("listContent")!.length === 0) {
                 return currentNoteList
             } else {
-                for (let i = 0; i < localStorage.getItem("listContent").split('|').length; i++) {
+                for (let i = 0; i < localStorage.getItem("listContent")!.split('|').length; i++) {
                     if (((tempText?.length === 0 || tempText === undefined) && search_term.length === 0) || listContent[i].substring(0, tempText?.length).toLowerCase() === tempText?.substring(0, tempText?.length).toLowerCase()) {
                         currentNoteList.id.push(listID[i])
                         currentNoteList.content.push(listContent[i])
@@ -147,9 +171,8 @@ export default function Home() {
                 setAllListNote(tempArrAll)
                 return currentNoteList
             }
-        }
+        } else return currentNoteList
     }
-
 
 
     return (
@@ -164,7 +187,7 @@ export default function Home() {
                        placeholder="type to search..." type="text" onChange={(e) => handleChange(e)}/>
             </header>
             <main className="grid-cols-3 grid flex-wrap justify-between items-center gap-[2rem]">
-                <Note backGround={styleBody.currentNoteBG}/>
+                <Note backGround = {styleBody.currentNoteBG}/>
                 {listNote !== undefined && listNote.id.map((value, index: number) => {
                     return (
                         <div key={listNote.id[index]} id={listNote.id[index]} style={styleNote}>
@@ -174,7 +197,7 @@ export default function Home() {
 
                             <div className="flex justify-between">
                                 <span className="font-semibold">{listNote.data[index]}</span>
-                                <Image onClick={() => handleDelete(listNote.id[index], allListNote)}
+                                <Image onClick={() => handleDelete(listNote.id[index], allListNote, index)}
                                        src="/image/icon-delete.png"
                                        alt="icon-delete"
                                        width={30}

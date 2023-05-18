@@ -3,7 +3,7 @@
 import './globals.css'
 import {Provider} from "react-redux";
 import "./globals.css"
-import store from "./store"
+import {store} from "@/app/store";
 
 
 export const metadata = {
