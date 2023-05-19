@@ -49,9 +49,9 @@ export default function Home() {
     const [styleNote, setStyleNote] = useState({
         backgroundColor: "#fff585",
         borderRadius: 0.5 + "rem",
-        width: 350 + "px",
         height: 220 + "px",
         padding: 0.5 + "rem",
+        margin: 0 + " auto"
     })
     const [search_term, setSearch_term] = useState("")
     const [styleBody, setStyleBody] = useState<TypePropStyle>({
@@ -186,11 +186,11 @@ export default function Home() {
                 <input className="bg-gray-300 w-full rounded-lg pl-2 py-0.5 my-4 placeholder-gray-500"
                        placeholder="type to search..." type="text" onChange={(e) => handleChange(e)}/>
             </header>
-            <main className="grid-cols-3 grid flex-wrap justify-between items-center gap-[2rem]">
+            <main className="md:grid-cols-3  max-md:grid-cols-1 grid flex-wrap md:justify-between max-md:justify-center items-center gap-[2rem]">
                 <Note backGround = {styleBody.currentNoteBG}/>
                 {listNote !== undefined && listNote.id.map((value, index: number) => {
                     return (
-                        <div key={listNote.id[index]} id={listNote.id[index]} style={styleNote}>
+                        <div key={listNote.id[index]} id={listNote.id[index]} style={styleNote} className="sm:w-[350px] max-sm:w-auto">
             <textarea key={listNote.id[index]} readOnly value={listNote.content[index]}
                       placeholder="Type to add a note"
                       className="placeholder-[#5d9794] bg-transparent w-[300px] h-[160px] resize-none tracking-wide font-semibold font-roboto text-lg rounded-lg outline-none"/>

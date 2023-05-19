@@ -14,9 +14,9 @@ export default function Note(props: TypeNoteProps) {
   const [styleNote, setStyleNote] = useState({
     backgroundColor: "#51bbaf",
     borderRadius: 0.5 + "rem",
-    width: 350 + "px",
     height: 220 + "px",
     padding: 0.5 + "rem",
+    margin: 0 + " auto"
   });
   const [wasSave, setSave] = useState(false);
   const refTextarea: React.Ref<HTMLTextAreaElement> = useRef(null);
@@ -100,7 +100,7 @@ export default function Note(props: TypeNoteProps) {
   };
 
   return (
-    <div ref={refDiv} style={styleNote}>
+    <div ref={refDiv} style={styleNote} className="sm:w-[350px]">
       <textarea
         ref={refTextarea}
         onFocus={onFocus}
