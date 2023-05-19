@@ -177,9 +177,9 @@ export default function Home() {
 
     return (
         <div className="md:w-[1120px] m-auto">
-            <header>
+            <header className='max-sm: p-[10px]'>
                 <nav className="flex justify-between items-center">
-                    <h1 style={{color: styleBody.color}} className="text-4xl font-bold">Notes</h1>
+                    <h1 style={{color: styleBody.color}} className="text-4xl font-bold max-sm:text-[35px]">Notes</h1>
                     <button onClick={handleToogleMode} className="bg-gray-300 rounded-2xl py-1 px-4">Toggle Mode
                     </button>
                 </nav>
