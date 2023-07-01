@@ -6,6 +6,7 @@ import { listNoteIncrement } from "@/Slice/noteSlice";
 import Image from "next/image";
 import moment from "moment";
 import { TypeNoteProps, TypePropStyle } from "@/app/page";
+import { motion } from "framer-motion";
 
 export default function Note(props: TypeNoteProps) {
   const [content, setContent] = useState("");
@@ -16,7 +17,7 @@ export default function Note(props: TypeNoteProps) {
     borderRadius: 0.5 + "rem",
     height: 220 + "px",
     padding: 0.5 + "rem",
-    margin: 0 + " auto"
+    margin: 0 + " auto",
   });
   const [wasSave, setSave] = useState(false);
   const refTextarea: React.Ref<HTMLTextAreaElement> = useRef(null);
@@ -40,6 +41,7 @@ export default function Note(props: TypeNoteProps) {
     if (e.target.value.length < 201) {
       setContent(e.target.value);
       setCount(200 - e.target.value.length);
+      setMessageError("");
     } else {
       setMessageError("Вы превысили длину сообщения!");
     }
@@ -57,17 +59,16 @@ export default function Note(props: TypeNoteProps) {
         setMessageError("");
       }, 3000);
     } else {
+      setMessageError("");
       setSave(true);
 
       if (refTextarea.current !== null) {
         dispatch(
-          listNoteIncrement(
-            {
-              currentID: currentID,
-              listContent: refTextarea.current.value,
-              listData: moment().format("L").toString(),
-            }
-          )
+          listNoteIncrement({
+            currentID: currentID,
+            listContent: refTextarea.current.value,
+            listData: moment().format("L").toString(),
+          })
         );
       }
 
@@ -94,7 +95,8 @@ export default function Note(props: TypeNoteProps) {
   };
 
   const handleClickEnter = (e: React.HTMLInputTypeAttribute) => {
-    if (focus && e === "Enter") {
+    if (focus && e === "Enter" && counter < 201) {
+      setMessageError("");
       handleBtnSave();
     }
   };
@@ -109,7 +111,7 @@ export default function Note(props: TypeNoteProps) {
         onChange={(e) => handleChange(e)}
         value={content}
         placeholder="Type to add a note..."
-        className="placeholder-[#2a9d8f] bg-transparent w-[300px] h-[160px] resize-none tracking-wide font-semibold font-roboto text-lg rounded-lg outline-none"
+        className="placeholder-[#2a9d8f] bg-transparent sm:w-[300px] w-[280px] h-[160px] resize-none tracking-wide font-semibold font-roboto text-lg rounded-lg outline-none"
       />
 
       <div className="flex justify-between">
@@ -126,7 +128,7 @@ export default function Note(props: TypeNoteProps) {
           {messageError.length === 0 && !wasSave && (
             <button
               onClick={handleBtnSave}
-              className="bg-gray-300 rounded-lg py-0.5 px-1.5"
+              className="bg-[#cacaca81] duration-300 hover:bg-[#38552f80] rounded-lg py-0.5 px-1.5"
             >
               save
             </button>
