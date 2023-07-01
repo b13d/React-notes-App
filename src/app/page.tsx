@@ -88,8 +88,9 @@ export default function Home() {
   const variants = {
     visible: (i: number) => ({
       opacity: 1,
+      y: 0,
       transition: {
-        duration: i * 0.3,
+        duration: i * 0.3 > 1 ? 1 : i * 0.3,
       },
     }),
   };
@@ -198,7 +199,7 @@ export default function Home() {
   }
   return (
     <motion.div
-      transition={{ duration: 2, ease: "easeInOut"}}
+      transition={{ duration: 2, ease: "easeInOut" }}
       className={`md:w-[1120px] m-auto ${
         styleBody.background === "white" ? "bg-[#F5F5DC]" : "bg-[#919162]"
       }  sm:p-5  min-h-[100vh]`}
@@ -206,7 +207,7 @@ export default function Home() {
       <header className="max-sm: p-[10px]">
         <nav className="flex justify-between items-center">
           <h1
-          style={{color : "#00000057"}}
+            style={{ color: "#00000057" }}
             // style={{ color: styleBody.color }}
             className="text-4xl font-bold max-sm:text-[35px]"
           >
@@ -238,7 +239,7 @@ export default function Home() {
             return (
               <motion.div
                 custom={index}
-                initial={{ opacity: 0 }}
+                initial={{ opacity: 0, y: -100 }}
                 animate="visible"
                 variants={variants}
                 key={listNote.id[index]}
